@@ -66,7 +66,7 @@ def initialize():
     metadata.close()
 
     numberOfSamples = len(categories)
-    numberOfTestset = int(sum(sampleNumber) * testRatio // 3)
+    numberOfTestset = int(sum(sampleNumber) * testRatio // numberOfSamples)
 
 
 def loop():
