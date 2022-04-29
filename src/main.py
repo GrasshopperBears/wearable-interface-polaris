@@ -32,8 +32,8 @@ def main():
     initialize()
     print("Initializing done.")
 
-    print(f"Running SVM with {testRatio} test ratio by {iteration} times...")
     if isSavingToCSV:
+        print(f"Running SVM with {testRatio} test ratio by {iteration} times...")
         for ctg in categories:
             outputFile.write(f"{ctg}-precision,{ctg}-recall,{ctg}-f1,")
         outputFile.write("total-accuracy\n")

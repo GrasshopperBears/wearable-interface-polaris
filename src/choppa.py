@@ -55,6 +55,3 @@ def chopAllSamples(dirName):
 
 if __name__ == "__main__":
     chopAllSamples("originalAudios")
-    # chopSample("oculus.wav")
-    # chopSample("desk.wav")
-    # chopSample("coffee.wav")

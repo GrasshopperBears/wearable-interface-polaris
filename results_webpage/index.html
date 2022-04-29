@@ -96,7 +96,7 @@
     <img src="confusion_matrix.png">
 
     <br>
-    Accuracy (mean of diagonal of confusion matrix) is 1.000
+    Accuracy (mean of diagonal of confusion matrix) is 0.981
     <p>
 
     <table border=0 cellpadding=4 cellspacing=1>
@@ -123,15 +123,41 @@
       </tr>
       -->
       <tr class="category-row">
-<td>coffee</td>
+<td>board</td>
 <td><div>1.000</div><div class="accuracy-bar" style="width:64px;"><div style="width:64.00px;"/></div></td>
-<td class="training"><img src="thumbnails/coffee_image.jpg" width=104 height=75></td>
-<td class="training"><img src="thumbnails/coffee_image.jpg" width=104 height=75></td>
-<td class="true-positive"><img src="thumbnails/coffee_image.jpg" width=104 height=75></td>
-<td class="true-positive"><img src="thumbnails/coffee_image.jpg" width=104 height=75></td>
+<td class="training"><img src="thumbnails/board_image.jpg" width=104 height=75></td>
+<td class="training"><img src="thumbnails/board_image.jpg" width=104 height=75></td>
+<td class="true-positive"><img src="thumbnails/board_image.jpg" width=104 height=75></td>
+<td class="true-positive"><img src="thumbnails/board_image.jpg" width=104 height=75></td>
 <td class="cell false-positive"></td>
 <td class="cell false-positive"></td>
 <td class="cell false-negative"></td>
+<td class="cell false-negative"></td>
+</tr>
+
+<tr class="category-row">
+<td>book</td>
+<td><div>1.000</div><div class="accuracy-bar" style="width:64px;"><div style="width:64.00px;"/></div></td>
+<td class="training"><img src="thumbnails/book_image.jpg" width=104 height=75></td>
+<td class="training"><img src="thumbnails/book_image.jpg" width=104 height=75></td>
+<td class="true-positive"><img src="thumbnails/book_image.jpg" width=104 height=75></td>
+<td class="true-positive"><img src="thumbnails/book_image.jpg" width=104 height=75></td>
+<td class="cell false-positive"></td>
+<td class="cell false-positive"></td>
+<td class="cell false-negative"></td>
+<td class="cell false-negative"></td>
+</tr>
+
+<tr class="category-row">
+<td>bottle</td>
+<td><div>0.955</div><div class="accuracy-bar" style="width:64px;"><div style="width:61.09px;"/></div></td>
+<td class="training"><img src="thumbnails/bottle_image.jpg" width=104 height=75></td>
+<td class="training"><img src="thumbnails/bottle_image.jpg" width=104 height=75></td>
+<td class="true-positive"><img src="thumbnails/bottle_image.jpg" width=104 height=75></td>
+<td class="true-positive"><img src="thumbnails/bottle_image.jpg" width=104 height=75></td>
+<td class="false-positive"><img src="thumbnails/bottle_image.jpg" width=104 height=75><br><small>wall</small></td>
+<td class="false-positive"><img src="thumbnails/bottle_image.jpg" width=104 height=75><br><small>wall</small></td>
+<td class="false-negative"><img src="thumbnails/bottle_image.jpg" width=104 height=75><br><small>glassDoor</small></td>
 <td class="cell false-negative"></td>
 </tr>
 
@@ -149,16 +175,42 @@
 </tr>
 
 <tr class="category-row">
-<td>oculus</td>
+<td>electricPot</td>
 <td><div>1.000</div><div class="accuracy-bar" style="width:64px;"><div style="width:64.00px;"/></div></td>
-<td class="training"><img src="thumbnails/oculus_image.jpg" width=104 height=75></td>
-<td class="training"><img src="thumbnails/oculus_image.jpg" width=104 height=75></td>
-<td class="true-positive"><img src="thumbnails/oculus_image.jpg" width=104 height=75></td>
-<td class="true-positive"><img src="thumbnails/oculus_image.jpg" width=104 height=75></td>
+<td class="training"><img src="thumbnails/electricPot_image.jpg" width=104 height=75></td>
+<td class="training"><img src="thumbnails/electricPot_image.jpg" width=104 height=75></td>
+<td class="true-positive"><img src="thumbnails/electricPot_image.jpg" width=104 height=75></td>
+<td class="true-positive"><img src="thumbnails/electricPot_image.jpg" width=104 height=75></td>
 <td class="cell false-positive"></td>
 <td class="cell false-positive"></td>
 <td class="cell false-negative"></td>
 <td class="cell false-negative"></td>
+</tr>
+
+<tr class="category-row">
+<td>glassDoor</td>
+<td><div>1.000</div><div class="accuracy-bar" style="width:64px;"><div style="width:64.00px;"/></div></td>
+<td class="training"><img src="thumbnails/glassDoor_image.jpg" width=104 height=75></td>
+<td class="training"><img src="thumbnails/glassDoor_image.jpg" width=104 height=75></td>
+<td class="true-positive"><img src="thumbnails/glassDoor_image.jpg" width=104 height=75></td>
+<td class="true-positive"><img src="thumbnails/glassDoor_image.jpg" width=104 height=75></td>
+<td class="false-positive"><img src="thumbnails/glassDoor_image.jpg" width=104 height=75><br><small>bottle</small></td>
+<td class="cell false-positive"></td>
+<td class="cell false-negative"></td>
+<td class="cell false-negative"></td>
+</tr>
+
+<tr class="category-row">
+<td>wall</td>
+<td><div>0.909</div><div class="accuracy-bar" style="width:64px;"><div style="width:58.18px;"/></div></td>
+<td class="training"><img src="thumbnails/wall_image.jpg" width=104 height=75></td>
+<td class="training"><img src="thumbnails/wall_image.jpg" width=104 height=75></td>
+<td class="true-positive"><img src="thumbnails/wall_image.jpg" width=104 height=75></td>
+<td class="true-positive"><img src="thumbnails/wall_image.jpg" width=104 height=75></td>
+<td class="cell false-positive"></td>
+<td class="cell false-positive"></td>
+<td class="false-negative"><img src="thumbnails/wall_image.jpg" width=104 height=75><br><small>bottle</small></td>
+<td class="false-negative"><img src="thumbnails/wall_image.jpg" width=104 height=75><br><small>bottle</small></td>
 </tr>
 
       <tr>

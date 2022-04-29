@@ -47,8 +47,8 @@ def create_results_webpage(
     # Visualization of confusion matrix
     plt.figure()
     plt.imshow(confusion_matrix)
-    plt.xticks(range(3), abbr_categories)
-    plt.yticks(range(3), categories)
+    plt.xticks(range(len(categories)), abbr_categories)
+    plt.yticks(range(len(categories)), categories)
 
     plt.savefig("results_webpage/confusion_matrix.png", bbox_inches="tight")
 
