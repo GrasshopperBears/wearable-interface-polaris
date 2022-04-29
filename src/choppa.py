@@ -31,7 +31,9 @@ def chopSample(basedir, audioName):
         else:
             idx += 1
 
-    return nameBase, sampleNumber - 1
+    os.remove(f"{AUTO_CHOP_DIR}/{nameBase}-{sampleNumber-1}.wav")
+
+    return nameBase, sampleNumber - 2
 
 
 def chopAllSamples(dirName):
