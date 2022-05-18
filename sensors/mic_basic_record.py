@@ -1,8 +1,9 @@
 import pyaudio
 import wave
 
-RATE = 16000
-CHUNK = int(RATE * 0.3)
+# {'index': 1, 'structVersion': 2, 'name': 'USB Audio: - (hw:1,0)', 'hostApi': 0, 'maxInputChannels': 2, 'maxOutputChannels': 2, 'defaultLowInputLatency': 0.007979166666666667, 'defaultLowOutputLatency': 0.007979166666666667, 'defaultHighInputLatency': 0.032, 'defaultHighOutputLatency': 0.032, 'defaultSampleRate': 48000.0}
+RATE = 48000
+CHUNK = 200
 FORMAT = pyaudio.paInt16
 CHANNELS = 1
 RECORD_SECONDS = 120
@@ -23,9 +24,10 @@ frames = []
 
 print("Enter source name")
 filename = input()
+print("Start recording")
 
 for i in range(0, int(RATE / CHUNK * RECORD_SECONDS)):
-    data = stream.read(CHUNK)
+    data = stream.read(CHUNK, exception_on_overflow = False)
     frames.append(data)
 
 print("Recording is finished.")
