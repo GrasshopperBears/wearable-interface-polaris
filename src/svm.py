@@ -36,9 +36,10 @@ def svm_classify(train_feats, train_labels, test_feats):
         y = np.ones([train_size])
         y[train_labels != category] = -1
 
-        model = svm.SVC(kernel="rbf", C=1000)
+        model = svm.SVC(kernel="rbf", C=10)
         model.fit(train_feats, y)
         svmResult[categoryIdx] = model.decision_function(test_feats)
+        # svmResult[categoryIdx] = model.predict_proba(test_feats)[:, 1]
 
     classifiedIndex = np.argmax(svmResult, axis=0)
 
@@ -55,7 +56,7 @@ def make_svm_model(train_feats, train_labels):
         y = np.ones([train_size])
         y[train_labels != category] = -1
 
-        model = svm.SVC(kernel="rbf", C=1000)
+        model = svm.SVC(kernel="rbf", C=10)
         model.fit(train_feats, y)
         
         joblib.dump(model, f"model/{category}.pkl")

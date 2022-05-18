@@ -6,8 +6,11 @@ import librosa
 import numpy as np
 from constants import CHOP_TIME_IN_SEC, PADDING_START, THRESHOLD_RATE
 from featureExtraction import extractFeatureWithRawData
+from scipy.io import wavfile  # scipy library to write wav files
+import soundfile as sf
+import matplotlib.pyplot as plt
  
-RATE = 16000
+RATE = 48000
 CHUNK = int(RATE * CHOP_TIME_IN_SEC)
 THRESHOLD = int(THRESHOLD_RATE * 32768)
 
@@ -42,12 +45,16 @@ def realtime():
                 
             AudioData = concatData / (2 ** (nbits - 1))
             features = extractFeatureWithRawData(AudioData, RATE).reshape(1, -1)
-            
-            result = [model.decision_function(features) for model in models]
+
+            result = [model.decision_function(features)[0] for model in models]
             if max(result) > 0:
                 print(categories[np.argmax(np.array(result))])
+                print(categories)
+                print(result)
             else:
                 print("Not sure")
+                print(categories)
+                print(result)
             
         prevData = data
         data = nextData
@@ -60,8 +67,9 @@ def loadModels(modelPath = "model/"):
     modelList = []
     categories = []
     for modelName in os.listdir(modelPath):
-        modelList.append(joblib.load(f"{modelPath}/{modelName}"))
-        categories.append(modelName.split(".")[0])
+        if not modelName.startswith("."):
+            modelList.append(joblib.load(f"{modelPath}/{modelName}"))
+            categories.append(modelName.split(".")[0])
 
     return modelList, categories
 

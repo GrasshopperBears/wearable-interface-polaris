@@ -35,11 +35,12 @@ def chopSample(basedir, audioName):
 
 def chopAllSamples(dirName):
     fileList = [
-        f for f in os.listdir(dirName) if os.path.isfile(os.path.join(dirName, f))
+        f for f in os.listdir(dirName) if os.path.isfile(os.path.join(dirName, f)) and not f.startswith(".")
     ]
     nameList = []
     countList = []
     for f in fileList:
+        print(dirName, f)
         name, count = chopSample(dirName, f)
         nameList.append(name)
         countList.append(str(count))
