@@ -18,7 +18,7 @@ padding_length = int(PADDING_START * RATE)
 nbits = 16
 
 def realtime():
-    models, categories = loadModels()
+    scaler, models, categories = loadModels()
     
     p = pyaudio.PyAudio()
     stream = p.open(format=pyaudio.paInt16,
@@ -45,6 +45,7 @@ def realtime():
                 
             AudioData = concatData / (2 ** (nbits - 1))
             features = extractFeatureWithRawData(AudioData, RATE).reshape(1, -1)
+            features = scaler.transform(features)
 
             result = [model.decision_function(features)[0] for model in models]
             if max(result) > 0:
@@ -67,11 +68,13 @@ def loadModels(modelPath = "model/"):
     modelList = []
     categories = []
     for modelName in os.listdir(modelPath):
-        if not modelName.startswith("."):
+        if modelName.startswith("scaler"):
+            scaler = joblib.load(f"{modelPath}/{modelName}")
+        elif not modelName.startswith("."):
             modelList.append(joblib.load(f"{modelPath}/{modelName}"))
             categories.append(modelName.split(".")[0])
 
-    return modelList, categories
+    return scaler, modelList, categories
 
 if __name__ == "__main__":
     realtime()

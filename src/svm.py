@@ -2,8 +2,10 @@ import numpy as np
 import pickle
 from sklearn import svm
 import joblib
+from sklearn.preprocessing import StandardScaler
 
-C = 1
+C = 3
+kernel = "sigmoid"
 
 def svm_classify(train_feats, train_labels, test_feats):
     """
@@ -32,12 +34,18 @@ def svm_classify(train_feats, train_labels, test_feats):
     test_size = test_feats.shape[0]
     svmResult = np.zeros([category_size, test_size])
 
+    # 정규화 작업
+    scaler = StandardScaler()
+    scaler.fit(train_feats)
+    train_feats = scaler.transform(train_feats)
+    test_feats = scaler.transform(test_feats)
+
     for categoryIdx in range(category_size):
         category = categories[categoryIdx]
         y = np.ones([train_size])
         y[train_labels != category] = -1
 
-        model = svm.SVC(kernel="rbf", C=C)
+        model = svm.SVC(kernel=kernel, C=C)
         model.fit(train_feats, y)
         svmResult[categoryIdx] = model.decision_function(test_feats)
         # svmResult[categoryIdx] = model.predict_proba(test_feats)[:, 1]
@@ -52,12 +60,19 @@ def make_svm_model(train_feats, train_labels):
     category_size = categories.shape[0]
     train_size = train_feats.shape[0]
 
+    # 정규화 작업
+    scaler = StandardScaler()
+    scaler.fit(train_feats)
+    train_feats = scaler.transform(train_feats)
+    joblib.dump(scaler, f"model/scaler.pkl")
+    
+
     for categoryIdx in range(category_size):
         category = categories[categoryIdx]
         y = np.ones([train_size])
         y[train_labels != category] = -1
 
-        model = svm.SVC(kernel="rbf", C=C)
+        model = svm.SVC(kernel=kernel, C=C)
         model.fit(train_feats, y)
         
         joblib.dump(model, f"model/{category}.pkl")
