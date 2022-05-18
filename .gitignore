@@ -190,7 +190,6 @@ cython_debug/
 *.code-workspace
 
 venv
-model/*
 data/*
 .DS_Store
 test.py
