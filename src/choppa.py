@@ -1,10 +1,7 @@
 from scipy.io import wavfile  # scipy library to read wav files
 import numpy as np
 import os
-
-CHOP_TIME_IN_SEC = 0.3
-THRESHOLD_RATE = 0.2
-PADDING_START = 0.01
+from constants import CHOP_TIME_IN_SEC, PADDING_START, THRESHOLD_RATE
 
 AUTO_CHOP_DIR = "data"
 

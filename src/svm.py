@@ -1,5 +1,7 @@
 import numpy as np
+import pickle
 from sklearn import svm
+import joblib
 
 
 def svm_classify(train_feats, train_labels, test_feats):
@@ -41,3 +43,19 @@ def svm_classify(train_feats, train_labels, test_feats):
     classifiedIndex = np.argmax(svmResult, axis=0)
 
     return categories[classifiedIndex]
+
+def make_svm_model(train_feats, train_labels):
+    categories = np.unique(train_labels)
+
+    category_size = categories.shape[0]
+    train_size = train_feats.shape[0]
+
+    for categoryIdx in range(category_size):
+        category = categories[categoryIdx]
+        y = np.ones([train_size])
+        y[train_labels != category] = -1
+
+        model = svm.SVC(kernel="rbf", C=1000)
+        model.fit(train_feats, y)
+        
+        joblib.dump(model, f"model/{category}.pkl")

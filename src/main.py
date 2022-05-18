@@ -1,9 +1,10 @@
+import os
 import numpy as np
 import random
 from collections import deque
 
 from featureExtraction import extractFeature
-from svm import svm_classify
+from svm import svm_classify, make_svm_model
 from create_results_webpage import create_results_webpage
 from choppa import chopAllSamples
 
@@ -20,19 +21,18 @@ isPrintingResultInsteadOfWeb = True
 metaFileName = "data/metadata.csv"
 
 # for multiple training
-isSavingToCSV = True
+isSavingToCSV = False # False when in case of making svm model 
 if isSavingToCSV:
     outputFileName = "output.csv"
     outputFile = open(outputFileName, "w")
     iteration = 100
-
-
+    
 def main():
     print("Initializing...")
     initialize()
     print("Initializing done.")
 
-    if isSavingToCSV:
+    if isSavingToCSV: # testing svm with several iteration
         print(f"Running SVM with {testRatio} test ratio by {iteration} times...")
         for ctg in categories:
             outputFile.write(f"{ctg}-precision,{ctg}-recall,{ctg}-f1,")
@@ -41,8 +41,8 @@ def main():
         for _ in range(iteration):
             loop()
 
-    else:
-        loop()
+    else: # building model
+        buildModel()
 
     print("Done.")
 
@@ -102,7 +102,20 @@ def loop():
                 categories,
                 svmResult,
             )
+            
+def buildModel():
+    trainLabels = deque()
+    trainFeatures = deque()
+    
+    for audioName in os.listdir(audioPath):
+        if audioName.endswith("wav"):
+            trainFeatures.append(extractFeature(audioPath + audioName))
+            trainLabels.append(audioName.split("-")[0])
 
+    npTrainFeatures = np.array(trainFeatures)
+    npTrainLabel = np.array(trainLabels)
+
+    make_svm_model(npTrainFeatures, npTrainLabel)
 
 def printAllResults(result, oracle):
     returnString = ""
