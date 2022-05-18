@@ -1,13 +1,12 @@
 import pyaudio
 import wave
 
-CHUNK = 512
+RATE = 16000
+CHUNK = int(RATE * 0.3)
 FORMAT = pyaudio.paInt16
 CHANNELS = 1
-RATE = 48000
-RECORD_SECONDS = 5
+RECORD_SECONDS = 120
 INPUT_DEVICE_INDEX = 1
-WAVE_OUTPUT_FILENAME = "output.wav"
 
 p = pyaudio.PyAudio()
 
@@ -22,6 +21,9 @@ print("Start to record the audio.")
 
 frames = []
 
+print("Enter source name")
+filename = input()
+
 for i in range(0, int(RATE / CHUNK * RECORD_SECONDS)):
     data = stream.read(CHUNK)
     frames.append(data)
@@ -31,6 +33,8 @@ print("Recording is finished.")
 stream.stop_stream()
 stream.close()
 p.terminate()
+
+WAVE_OUTPUT_FILENAME = f"{filename}.wav"
 
 wf = wave.open(WAVE_OUTPUT_FILENAME, 'wb')
 wf.setnchannels(CHANNELS)
