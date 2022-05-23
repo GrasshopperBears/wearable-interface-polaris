@@ -2,6 +2,7 @@ import numpy as np
 import pickle
 from sklearn import svm
 import joblib
+from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
 
 C = 3
@@ -34,11 +35,15 @@ def svm_classify(train_feats, train_labels, test_feats):
     test_size = test_feats.shape[0]
     svmResult = np.zeros([category_size, test_size])
 
-    # 정규화 작업
     scaler = StandardScaler()
     scaler.fit(train_feats)
     train_feats = scaler.transform(train_feats)
     test_feats = scaler.transform(test_feats)
+    
+    pca = PCA(n_components=10)
+    pca.fit(train_feats)
+    train_feats = pca.transform(train_feats)
+    test_feats = pca.transform(test_feats)
 
     for categoryIdx in range(category_size):
         category = categories[categoryIdx]
@@ -60,12 +65,15 @@ def make_svm_model(train_feats, train_labels):
     category_size = categories.shape[0]
     train_size = train_feats.shape[0]
 
-    # 정규화 작업
     scaler = StandardScaler()
     scaler.fit(train_feats)
     train_feats = scaler.transform(train_feats)
     joblib.dump(scaler, f"model/scaler.pkl")
     
+    pca = PCA(n_components=10)
+    pca.fit(train_feats)
+    train_feats = pca.transform(train_feats)
+    joblib.dump(pca, f"model/pca.pkl")
 
     for categoryIdx in range(category_size):
         category = categories[categoryIdx]
