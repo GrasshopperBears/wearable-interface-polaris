@@ -4,6 +4,7 @@ import random
 from collections import deque
 
 from featureExtraction import extractFeature
+from knn import knn_classify, make_knn_model
 from svm import svm_classify, make_svm_model
 from create_results_webpage import create_results_webpage
 from choppa import chopAllSamples
@@ -86,6 +87,7 @@ def loop():
     npTrainLabel = np.array(trainLabel)
 
     svmResult = svm_classify(npTrainFeatures, npTrainLabel, npTestFeatures)
+    # svmResult = knn_classify(npTrainFeatures, npTrainLabel, npTestFeatures)
 
     if isSavingToCSV:
         outputFile.write(printAllResults(svmResult, npTestLabel))

@@ -5,8 +5,9 @@ import joblib
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
 
-C = 3
-kernel = "sigmoid"
+C = 1
+kernel = "rbf"
+
 
 def svm_classify(train_feats, train_labels, test_feats):
     """
@@ -40,17 +41,16 @@ def svm_classify(train_feats, train_labels, test_feats):
     train_feats = scaler.transform(train_feats)
     test_feats = scaler.transform(test_feats)
     
-    pca = PCA(n_components=10)
-    pca.fit(train_feats)
-    train_feats = pca.transform(train_feats)
-    test_feats = pca.transform(test_feats)
-
     for categoryIdx in range(category_size):
         category = categories[categoryIdx]
         y = np.ones([train_size])
         y[train_labels != category] = -1
 
-        model = svm.SVC(kernel=kernel, C=C)
+        if category == "electricKettle":
+            model = svm.SVC(kernel=kernel, C=C)
+        else:
+            model = svm.SVC(kernel=kernel, C=C*5)
+
         model.fit(train_feats, y)
         svmResult[categoryIdx] = model.decision_function(test_feats)
         # svmResult[categoryIdx] = model.predict_proba(test_feats)[:, 1]
@@ -70,17 +70,15 @@ def make_svm_model(train_feats, train_labels):
     train_feats = scaler.transform(train_feats)
     joblib.dump(scaler, f"model/scaler.pkl")
     
-    pca = PCA(n_components=10)
-    pca.fit(train_feats)
-    train_feats = pca.transform(train_feats)
-    joblib.dump(pca, f"model/pca.pkl")
-
     for categoryIdx in range(category_size):
         category = categories[categoryIdx]
         y = np.ones([train_size])
         y[train_labels != category] = -1
 
-        model = svm.SVC(kernel=kernel, C=C)
+        if category == "electricKettle":
+            model = svm.SVC(kernel=kernel, C=C)
+        else:
+            model = svm.SVC(kernel=kernel, C=C*5)
         model.fit(train_feats, y)
         
         joblib.dump(model, f"model/{category}.pkl")
