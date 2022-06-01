@@ -3,9 +3,9 @@ import wave
 
 FORMAT = pyaudio.paInt16
 CHANNELS = 1
-RATE = 24000
+RATE = 48000
 CHUNK = 1024
-RECORD_SECONDS = 150
+RECORD_SECONDS = 10
 INPUT_DEVICE_INDEX = 1
 
 audio = pyaudio.PyAudio()
@@ -23,7 +23,7 @@ object_name = input("Enter object name: ")
 frames = []
 
 for i in range(0, int(RATE / CHUNK * RECORD_SECONDS)):
-  data = stream.read(CHUNK)
+  data = stream.read(CHUNK, exception_on_overflow=False)
   frames.append(data)
 print("Record finished. Now saving...")
 
