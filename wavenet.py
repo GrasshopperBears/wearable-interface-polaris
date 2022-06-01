@@ -10,6 +10,9 @@ from keras import backend as K
 from keras import metrics
 from keras import optimizers
 from keras.callbacks import History, ModelCheckpoint
+from collections import deque
+import os
+import librosa
 
 
 class WaveNetClassifier():
@@ -46,6 +49,7 @@ class WaveNetClassifier():
     else:
       print('ERROR: wrong task')
       sys.exit()
+    self.task = task
     
     # save input info
     if len(input_shape) == 1:
@@ -129,10 +133,10 @@ class WaveNetClassifier():
       out = TimeDistributed(Activation(self.activation))(out)
     else:
       out = Conv1D(self.n_filters, 100, padding='same', activation='relu', name='conv_500ms')(out)
-      out = Conv1D(self.output_shape[0], 100, padding='same', activation='relu', name='conv_500ms_target_shape')(out)
-      out = AveragePooling1D(100, padding='same',name = 'downsample_to_2Hz')(out)
-      out = Conv1D(self.output_shape[0], (int) (self.input_shape[0] / 8000), padding='same', name='final_conv')(out)
-      out = AveragePooling1D((int) (self.input_shape[0] / 8000), name='final_pooling')(out)
+      out = Conv1D(self.output_shape[0], 10, padding='same', activation='relu', name='conv_500ms_target_shape')(out)
+      out = AveragePooling1D(60, padding='same',name = 'downsample_to_2Hz')(out)
+      out = Conv1D(self.output_shape[0], (int) (self.input_shape[0] / 4800), padding='same', name='final_conv')(out)
+      out = AveragePooling1D((int) (self.input_shape[0] / 4800), name='final_pooling')(out)
       out = Reshape(self.output_shape)(out)
       out = Activation(self.activation)(out)
     if self.scale_ratio != 1:
@@ -147,7 +151,7 @@ class WaveNetClassifier():
   def add_loss(self, loss):
     self.manual_loss = loss
   
-  def fit(self, X, Y, validation_data = None, epochs = 100, batch_size = 32, optimizer='adam', save=False, save_dir='./'):
+  def fit(self, X, Y, validation_data = None, epochs = 30, batch_size = 32, optimizer='adam', save=False, save_dir='./', validation_split=0.2):
     # set default losses if not defined
     if self.manual_loss is not None:
       loss = self.manual_loss
@@ -176,7 +180,7 @@ class WaveNetClassifier():
     # compile the model
     self.model.compile(optimizer, loss, metrics)
     try:
-      self.history = self.model.fit(X, Y, shuffle = True, batch_size=batch_size, epochs = epochs, validation_data = validation_data, callbacks=callbacks, initial_epoch=self.start_idx)
+      self.history = self.model.fit(X, Y, shuffle = True, batch_size=batch_size, epochs = epochs, validation_data = validation_data, callbacks=callbacks, initial_epoch=self.start_idx, validation_split=validation_split)
     except:
       if save:
         df = pd.DataFrame.from_dict(history.history)
@@ -188,3 +192,31 @@ class WaveNetClassifier():
 
   def predict(self, x):
     return self.model.predict(x)
+
+audioPath = "./data/"
+INPUT_LEN = (4800,)
+CLASSES = (6,)
+VALIDATION_NUM = 19
+classifier = WaveNetClassifier(INPUT_LEN, CLASSES)
+
+trainLabels = []
+trainData = []
+validationData = []
+labels = ["book", "stone", "table", "wall", "whiteboard", "wood"]
+
+
+for audioName in os.listdir(audioPath):
+  if audioName.endswith("wav"):
+    Audiodata, fs = librosa.load(audioPath+audioName, sr=None)
+    for _ in range(10):
+      noise = np.random.normal(-1, 1, len(Audiodata))
+      trainData.append(Audiodata + noise)
+      object_name = audioName.split("-")[0]
+      label = np.zeros(len(labels))
+      label[labels.index(object_name)] = 1
+      trainLabels.append(label)
+
+npTrainData = np.array(trainData)
+npTrainLabel = np.array(trainLabels)
+
+classifier.fit(npTrainData, npTrainLabel, save=True)
