@@ -45,14 +45,14 @@ def realtime():
                 
             AudioData = concatData / (2 ** (nbits - 1))
             features = extractFeatureWithRawData(AudioData, RATE).reshape(1, -1)
-            features = scaler.transform(features)
+            # features = scaler.transform(features)
             features = pca.transform(features)
 
             result = [model.decision_function(features)[0] for model in models]
             
             # wavfile.write(f"test/{AudioData[0]}{AudioData[1]}{AudioData[2]}{AudioData[3]}.wav", RATE, concatData)
             # plt.figure(1)
-            # plt.title("Signal Wave…")
+            # plt.title("Signal Wave???")
             # plt.plot(AudioData)
             # plt.show()
             

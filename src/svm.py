@@ -6,6 +6,7 @@ from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
 
 C = 3
+N = 80
 kernel = "sigmoid"
 
 def svm_classify(train_feats, train_labels, test_feats):
@@ -40,7 +41,7 @@ def svm_classify(train_feats, train_labels, test_feats):
     train_feats = scaler.transform(train_feats)
     test_feats = scaler.transform(test_feats)
     
-    pca = PCA(n_components=10)
+    pca = PCA(n_components=N)
     pca.fit(train_feats)
     train_feats = pca.transform(train_feats)
     test_feats = pca.transform(test_feats)
@@ -70,7 +71,28 @@ def make_svm_model(train_feats, train_labels):
     train_feats = scaler.transform(train_feats)
     joblib.dump(scaler, f"model/scaler.pkl")
     
-    pca = PCA(n_components=10)
+    pca = PCA(n_components=N)
+    pca.fit(train_feats)
+    train_feats = pca.transform(train_feats)
+    joblib.dump(pca, f"model/pca.pkl")
+
+    for categoryIdx in range(category_size):
+        category = categories[categoryIdx]
+        y = np.ones([train_size])
+        y[train_labels != category] = -1
+
+        model = svm.SVC(kernel=kernel, C=C)
+        model.fit(train_feats, y)
+        
+        joblib.dump(model, f"model/{category}.pkl")
+
+def make_pca_model(train_feats, train_labels):
+    categories = np.unique(train_labels)
+
+    category_size = categories.shape[0]
+    train_size = train_feats.shape[0]
+
+    pca = PCA(n_components=N)
     pca.fit(train_feats)
     train_feats = pca.transform(train_feats)
     joblib.dump(pca, f"model/pca.pkl")
