@@ -12,8 +12,8 @@ def is_tap():
   print("IMU started")
   
   while True:
-    accel_x, accel_y, accel_z = sensor.acceleration
-    accel_x, accel_y, accel_z = abs(accel_x), abs(accel_y), abs(accel_z)
+    _, _, accel_z = sensor.acceleration
+    accel_z = abs(accel_z)
     
     if accel_z > THRESHOLD:
       print("tap")
