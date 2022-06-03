@@ -45,11 +45,14 @@ def realtime():
                 
             AudioData = concatData / (2 ** (nbits - 1))
             features = extractFeatureWithRawData(AudioData, RATE).reshape(1, -1)
-            # features = scaler.transform(features)
+            features = scaler.transform(features)
             features = pca.transform(features)
 
             result = [model.decision_function(features)[0] for model in models]
-            
+            # result = knn.predict(features)
+            # print(features)
+            # print(result)
+
             # wavfile.write(f"test/{AudioData[0]}{AudioData[1]}{AudioData[2]}{AudioData[3]}.wav", RATE, concatData)
             # plt.figure(1)
             # plt.title("Signal Wave???")
@@ -80,6 +83,8 @@ def loadModels(modelPath = "model/"):
             scaler = joblib.load(f"{modelPath}/{modelName}")
         elif modelName.startswith("pca"):
             pca = joblib.load(f"{modelPath}/{modelName}")
+        # elif modelName.startswith("knn"):
+        #     knn = joblib.load(f"{modelPath}/{modelName}")
         elif not modelName.startswith("."):
             modelList.append(joblib.load(f"{modelPath}/{modelName}"))
             categories.append(modelName.split(".")[0])

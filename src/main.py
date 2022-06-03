@@ -25,7 +25,7 @@ isSavingToCSV = False # False when in case of making svm model
 if isSavingToCSV:
     outputFileName = "output.csv"
     outputFile = open(outputFileName, "w")
-    iteration = 100
+    iteration = 10
     
 def main():
     print("Initializing...")
