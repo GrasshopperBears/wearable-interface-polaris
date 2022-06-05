@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <button>Request</button>
+  </body>
+  <script>
+    const button = document.querySelector('button');
+    button.addEventListener('click', function () {
+      navigator.bluetooth
+        .requestDevice({
+          filters: [
+            {
+              services: ['0000a201-0000-1000-8000-00805f9b34fb'],
+            },
+          ],
+          optionalServices: ['00001910-0000-1000-8000-00805f9b34fb'],
+        })
+        .then((device) => device.gatt.connect())
+        .then((server) => server.getPrimaryService('00001910-0000-1000-8000-00805f9b34fb'))
+        .then((service) => service.getCharacteristic('00002b11-0000-1000-8000-00805f9b34fb'))
+        .then((characteristic) => {
+          const data = Uint8Array.of(0x55aa000600050101000101f6);
+          return characteristic.writeValue(data);
+        })
+        .then(() => console.log('success'))
+        .catch((error) => {
+          console.error(error);
+        });
+    });
+  </script>
+</html>
