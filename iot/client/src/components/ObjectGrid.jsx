@@ -14,7 +14,7 @@ const Wrapper = styled.div`
   box-sizing: border-box;
   width: 33vw;
   height: 50vh;
-  border: ${({ selected }) => (selected ? '8px solid #FDCA40' : '')};
+  border: ${({ selected }) => (selected ? '8px solid #FDCA40' : '1px solid #000000')};
   position: relative;
 `;
 
@@ -27,6 +27,7 @@ const Title = styled.div`
   width: 24rem;
   padding: 10px 0;
   position: absolute;
+  top: 1rem;
   left: calc(50% - 12rem);
 `;
 

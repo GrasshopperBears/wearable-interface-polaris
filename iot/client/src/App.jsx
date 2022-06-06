@@ -14,13 +14,13 @@ import Waterfilter from './components/Waterfilter';
 
 const App = () => {
   const [socket, setSocket] = useState(undefined);
-  const [lastObject, setLastObject] = useState(undefined);
+  const [lastObject, setLastObject] = useState({ object: undefined, arrived: Date.now() });
 
   useEffect(() => {
     const serverSocket = io('http://localhost:4000');
     setSocket(serverSocket);
     serverSocket.on('detect', (newObject) => {
-      setLastObject(newObject);
+      setLastObject({ object: newObject, arrived: Date.now() });
     });
     return () => {
       serverSocket.disconnect();
@@ -31,25 +31,25 @@ const App = () => {
   return (
     <MainContainer className='App'>
       <Row>
-        <ObjectGrid object='microwave' lastObject={lastObject}>
-          <Microwave />
+        <ObjectGrid object='microwave' lastObject={lastObject.object}>
+          <Microwave lastObject={lastObject} />
         </ObjectGrid>
-        <ObjectGrid object='book' lastObject={lastObject}>
-          <Book />
+        <ObjectGrid object='book' lastObject={lastObject.object}>
+          <Book lastObject={lastObject} />
         </ObjectGrid>
-        <ObjectGrid object='wall' lastObject={lastObject}>
-          <Wall />
+        <ObjectGrid object='wall' lastObject={lastObject.object}>
+          <Wall lastObject={lastObject} />
         </ObjectGrid>
       </Row>
       <Row>
-        <ObjectGrid object='waterfilter' lastObject={lastObject}>
-          <Waterfilter />
+        <ObjectGrid object='waterfilter' lastObject={lastObject.object}>
+          <Waterfilter lastObject={lastObject} />
         </ObjectGrid>
-        <ObjectGrid object='desk' lastObject={lastObject}>
-          <Desk />
+        <ObjectGrid object='desk' lastObject={lastObject.object}>
+          <Desk lastObject={lastObject} />
         </ObjectGrid>
-        <ObjectGrid object='kettle' lastObject={lastObject}>
-          <Kettle />
+        <ObjectGrid object='kettle' lastObject={lastObject.object}>
+          <Kettle lastObject={lastObject} />
         </ObjectGrid>
       </Row>
     </MainContainer>
