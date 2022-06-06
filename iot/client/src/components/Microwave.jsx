@@ -2,10 +2,14 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 
 const Microwave = ({ lastObject }) => {
+  const [audio] = useState(new Audio('microwave.m4a'));
   const [turnedOn, setTurnedOn] = useState(false);
 
   useEffect(() => {
-    if (lastObject.object === 'microwave') setTurnedOn(!turnedOn);
+    if (lastObject.object === 'microwave') {
+      if (!turnedOn) audio.play();
+      setTurnedOn(!turnedOn);
+    }
   }, [lastObject]);
 
   return <Wrapper>{turnedOn ? <Img src='microwave-on.jpg'></Img> : <Img src='microwave-off.jpg'></Img>}</Wrapper>;
