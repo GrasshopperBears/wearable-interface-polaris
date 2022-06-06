@@ -1,7 +1,7 @@
 import React from 'react';
 
 const Desk = () => {
-  return <p>Desk</p>;
+  return <div className='object-container'>Desk</div>;
 };
 
 export default Desk;

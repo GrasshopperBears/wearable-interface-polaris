@@ -1,7 +1,7 @@
 import React from 'react';
 
 const Waterfilter = () => {
-  return <p>Waterfilter</p>;
+  return <div className='object-container'>Waterfilter</div>;
 };
 
 export default Waterfilter;

@@ -1,7 +1,7 @@
 import React from 'react';
 
 const Book = () => {
-  return <p>Book</p>;
+  return <div className='object-container'>Book</div>;
 };
 
 export default Book;

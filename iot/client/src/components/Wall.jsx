@@ -1,7 +1,7 @@
 import React from 'react';
 
 const Wall = () => {
-  return <p>Wall</p>;
+  return <div className='object-container'>Wall</div>;
 };
 
 export default Wall;
