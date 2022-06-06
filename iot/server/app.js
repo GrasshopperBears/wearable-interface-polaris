@@ -1,16 +1,19 @@
 const Koa = require('koa');
-const http = require('http');
+const { createServer } = require('http');
 const Router = require('koa-router');
+const cors = require('@koa/cors');
 const logger = require('koa-logger');
-const io = require('socket.io');
+const { Server } = require('socket.io');
 
 const PORT = 4000;
 
 const app = new Koa();
-const server = http.createServer(app.callback());
+const server = createServer(app.callback);
+const io = new Server(server, { cors: { origin: 'http://localhost:3000' } });
 const router = new Router();
 
 app.use(logger());
+app.use(cors());
 
 router.post('/detect/:object', async (ctx, next) => {
   const { object } = ctx.params;
@@ -22,10 +25,10 @@ app.use(async (ctx) => {
   ctx.status = 404;
 });
 
-server.listen(PORT, () => {
-  console.log('Server started');
+io.on('connection', (socket) => {
+  console.log(`Client connected: id=${socket.id}`);
 });
 
-io(server).on('connect', (socket) => {
-  console.log(`Client connected: id=${socket.id}`);
+server.listen(PORT, () => {
+  console.log('Server started');
 });

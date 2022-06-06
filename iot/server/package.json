@@ -10,6 +10,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@koa/cors": "^3.3.0",
     "koa": "^2.13.4",
     "koa-logger": "^3.2.1",
     "koa-router": "^10.1.1",
