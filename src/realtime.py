@@ -9,15 +9,20 @@ from featureExtraction import extractFeatureWithRawData
 from scipy.io import wavfile  # scipy library to write wav files
 import soundfile as sf
 import matplotlib.pyplot as plt
- 
+import board
+import adafruit_lsm9ds1
+
 RATE = 48000
 CHUNK = int(RATE * CHOP_TIME_IN_SEC)
 THRESHOLD = int(THRESHOLD_RATE * 32768)
+IMU_THRESHOLD = 3
 
 padding_length = int(PADDING_START * RATE)
 nbits = 16
 
 def realtime():
+    i2c = board.I2C()
+    sensor = adafruit_lsm9ds1.LSM9DS1_I2C(i2c)
     scaler, pca, models, categories = loadModels()
     
     p = pyaudio.PyAudio()
@@ -32,10 +37,13 @@ def realtime():
     data = np.frombuffer(stream.read(CHUNK), dtype=np.int16)
 
     while True:
+        _, _, accel_z = sensor.acceleration
+        accel_z = abs(accel_z)
+
         nextData = np.frombuffer(stream.read(CHUNK), dtype=np.int16)
         
         overThrList = np.argwhere(np.abs(data) > THRESHOLD)
-        if len(overThrList) != 0: # the case when some value is exceed threshold
+        if len(overThrList) != 0 and accel_z > IMU_THRESHOLD: # the case when some value is exceed threshold
             first = overThrList[0][0]
             startIdx = first - padding_length
             if startIdx > 0:
