@@ -6,8 +6,11 @@ import librosa
 import numpy as np
 from constants import CHOP_TIME_IN_SEC, PADDING_START, THRESHOLD_RATE
 from featureExtraction import extractFeatureWithRawData
+from scipy.io import wavfile  # scipy library to write wav files
+import soundfile as sf
+import matplotlib.pyplot as plt
  
-RATE = 16000
+RATE = 48000
 CHUNK = int(RATE * CHOP_TIME_IN_SEC)
 THRESHOLD = int(THRESHOLD_RATE * 32768)
 
@@ -15,7 +18,7 @@ padding_length = int(PADDING_START * RATE)
 nbits = 16
 
 def realtime():
-    models, categories = loadModels()
+    scaler, pca, models, categories = loadModels()
     
     p = pyaudio.PyAudio()
     stream = p.open(format=pyaudio.paInt16,
@@ -42,12 +45,28 @@ def realtime():
                 
             AudioData = concatData / (2 ** (nbits - 1))
             features = extractFeatureWithRawData(AudioData, RATE).reshape(1, -1)
+            features = scaler.transform(features)
+            features = pca.transform(features)
+
+            result = [model.decision_function(features)[0] for model in models]
+            # result = knn.predict(features)
+            # print(features)
+            # print(result)
+
+            # wavfile.write(f"test/{AudioData[0]}{AudioData[1]}{AudioData[2]}{AudioData[3]}.wav", RATE, concatData)
+            # plt.figure(1)
+            # plt.title("Signal Wave???")
+            # plt.plot(AudioData)
+            # plt.show()
             
-            result = [model.decision_function(features) for model in models]
             if max(result) > 0:
                 print(categories[np.argmax(np.array(result))])
+                print(categories)
+                print(result)
             else:
                 print("Not sure")
+                print(categories)
+                print(result)
             
         prevData = data
         data = nextData
@@ -60,10 +79,17 @@ def loadModels(modelPath = "model/"):
     modelList = []
     categories = []
     for modelName in os.listdir(modelPath):
-        modelList.append(joblib.load(f"{modelPath}/{modelName}"))
-        categories.append(modelName.split(".")[0])
+        if modelName.startswith("scaler"):
+            scaler = joblib.load(f"{modelPath}/{modelName}")
+        elif modelName.startswith("pca"):
+            pca = joblib.load(f"{modelPath}/{modelName}")
+        # elif modelName.startswith("knn"):
+        #     knn = joblib.load(f"{modelPath}/{modelName}")
+        elif not modelName.startswith("."):
+            modelList.append(joblib.load(f"{modelPath}/{modelName}"))
+            categories.append(modelName.split(".")[0])
 
-    return modelList, categories
+    return scaler, pca, modelList, categories
 
 if __name__ == "__main__":
     realtime()
