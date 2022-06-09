@@ -11,6 +11,7 @@ import soundfile as sf
 import matplotlib.pyplot as plt
 import board
 import adafruit_lsm9ds1
+import requests
 
 RATE = 48000
 CHUNK = int(RATE * CHOP_TIME_IN_SEC)
@@ -21,6 +22,7 @@ padding_length = int(PADDING_START * RATE)
 nbits = 16
 
 def realtime():
+    BASE_URL = input("Enter base URL: ")
     i2c = board.I2C()
     sensor = adafruit_lsm9ds1.LSM9DS1_I2C(i2c)
     scaler, pca, models, categories = loadModels()
@@ -33,14 +35,14 @@ def realtime():
                     frames_per_buffer=CHUNK)
 
     AudioData = np.zeros(CHUNK, dtype=np.float32)
-    prevData = np.frombuffer(stream.read(CHUNK), dtype=np.int16)
-    data = np.frombuffer(stream.read(CHUNK), dtype=np.int16)
+    prevData = np.frombuffer(stream.read(CHUNK, exception_on_overflow = False), dtype=np.int16)
+    data = np.frombuffer(stream.read(CHUNK, exception_on_overflow = False), dtype=np.int16)
 
     while True:
         _, _, accel_z = sensor.acceleration
         accel_z = abs(accel_z)
 
-        nextData = np.frombuffer(stream.read(CHUNK), dtype=np.int16)
+        nextData = np.frombuffer(stream.read(CHUNK, exception_on_overflow = False), dtype=np.int16)
         
         overThrList = np.argwhere(np.abs(data) > THRESHOLD)
         if len(overThrList) != 0 and accel_z > IMU_THRESHOLD: # the case when some value is exceed threshold
@@ -68,9 +70,11 @@ def realtime():
             # plt.show()
             
             if max(result) > 0:
-                print(categories[np.argmax(np.array(result))])
+                result_object = categories[np.argmax(np.array(result))]
+                print(result_object)
                 print(categories)
                 print(result)
+                requests.post("{}/detect/{}".format(BASE_URL, result_object))
             else:
                 print("Not sure")
                 print(categories)
