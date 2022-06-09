@@ -16,13 +16,14 @@ import requests
 RATE = 48000
 CHUNK = int(RATE * CHOP_TIME_IN_SEC)
 THRESHOLD = int(THRESHOLD_RATE * 32768)
-IMU_THRESHOLD = 3
+IMU_THRESHOLD = 2
 
 padding_length = int(PADDING_START * RATE)
 nbits = 16
 
 def realtime():
-    BASE_URL = input("Enter base URL: ")
+    # BASE_URL = input("Enter base URL: ")
+    BASE_URL = "https://8c61-192-249-27-48.jp.ngrok.io"
     i2c = board.I2C()
     sensor = adafruit_lsm9ds1.LSM9DS1_I2C(i2c)
     scaler, pca, models, categories = loadModels()
@@ -39,8 +40,16 @@ def realtime():
     data = np.frombuffer(stream.read(CHUNK, exception_on_overflow = False), dtype=np.int16)
 
     while True:
-        _, _, accel_z = sensor.acceleration
-        accel_z = abs(accel_z)
+        try:
+            _, _, accel_z = sensor.acceleration
+            accel_z = abs(accel_z)
+        except:
+            # print("IMU...")
+            try:
+                sensor = adafruit_lsm9ds1.LSM9DS1_I2C(i2c)
+                continue
+            except:
+                continue
 
         nextData = np.frombuffer(stream.read(CHUNK, exception_on_overflow = False), dtype=np.int16)
         
@@ -68,17 +77,20 @@ def realtime():
             # plt.title("Signal Wave???")
             # plt.plot(AudioData)
             # plt.show()
-            
+            print("-------------------------")
+            print("")
             if max(result) > 0:
                 result_object = categories[np.argmax(np.array(result))]
                 print(result_object)
-                print(categories)
-                print(result)
+                # print(categories)
+                # print(result)
                 requests.post("{}/detect/{}".format(BASE_URL, result_object))
             else:
                 print("Not sure")
-                print(categories)
-                print(result)
+                # print(categories)
+                # print(result)
+            print("")
+            print("-------------------------")
             
         prevData = data
         data = nextData
