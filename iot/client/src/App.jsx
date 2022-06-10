@@ -9,6 +9,8 @@ import Kettle from './components/Kettle';
 import Microwave from './components/Microwave';
 import Wall from './components/Wall';
 import Waterfilter from './components/Waterfilter';
+import FireExtinguisher from './components/FireExtinguisher';
+import Glassdoor from './components/Glassdoor';
 
 // ['microwave', 'book', 'wall', 'waterfilter', 'desk', 'kettle']
 
@@ -37,9 +39,15 @@ const App = () => {
         <ObjectGrid object='book' lastObject={lastObject.object}>
           <Book lastObject={lastObject} />
         </ObjectGrid>
-        <ObjectGrid object='wall' lastObject={lastObject.object}>
-          <Wall lastObject={lastObject} />
+        <ObjectGrid object='fireextinguisher' lastObject={lastObject.object}>
+          <FireExtinguisher lastObject={lastObject} />
         </ObjectGrid>
+        <ObjectGrid object='glassdoor' lastObject={lastObject.object}>
+          <Glassdoor lastObject={lastObject} />
+        </ObjectGrid>
+        {/* <ObjectGrid object='wall' lastObject={lastObject.object}>
+          <Wall lastObject={lastObject} />
+        </ObjectGrid> */}
       </Row>
       <Row>
         <ObjectGrid object='waterfilter' lastObject={lastObject.object}>

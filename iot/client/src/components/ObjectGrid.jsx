@@ -21,14 +21,14 @@ const Wrapper = styled.div`
 const Title = styled.div`
   background-color: black;
   color: white;
-  font-size: 3rem;
+  font-size: 2rem;
   border-radius: 7px;
   text-align: center;
-  width: 24rem;
+  width: 18rem;
   padding: 10px 0;
   position: absolute;
   top: 1rem;
-  left: calc(50% - 12rem);
+  left: calc(50% - 9rem);
 `;
 
 export default ObjectGrid;
