@@ -18,7 +18,11 @@ THRESHOLD = int(THRESHOLD_RATE * 32768)
 padding_length = int(PADDING_START * RATE)
 nbits = 16
 
+doubleTapThreshold = 0.5
+
 def realtime():
+    prevTime = 0
+    prevPredict = ""
     scaler, pca, models, categories = loadModels()
     
     p = pyaudio.PyAudio()
@@ -40,10 +44,11 @@ def realtime():
         overThrList = np.argwhere(np.abs(data) > THRESHOLD)
         if len(overThrList) != 0: # the case when some value is exceed threshold
             first = overThrList[0][0]
-            print(dynamite)
 
             if dynamite > 0:
                 dynamite -= 1
+                prevData = data
+                data = nextData
                 continue
 
             startIdx = first - padding_length
@@ -54,7 +59,6 @@ def realtime():
             
             lastIdx = startIdx + np.argwhere(np.abs(concatData) > THRESHOLD)[-1][0]
             if lastIdx > CHUNK:
-                print((lastIdx - CHUNK) // (CHUNK // 5))
                 dynamite = 3 + ((lastIdx - CHUNK) // (CHUNK // 5))
                 
             AudioData = concatData / (2 ** (nbits - 1))
@@ -74,9 +78,18 @@ def realtime():
             # plt.show()
             
             print("------------------------")
-            print(time())
+            curTime = time()
+            print(curTime)
             if max(result) > 0:
-                print(categories[np.argmax(np.array(result))])
+                category = categories[np.argmax(np.array(result))]
+                
+                if curTime - prevTime < doubleTapThreshold and prevPredict == category:
+                    print(f"{prevPredict} double tap!")
+                else:
+                    print(category)
+                    prevTime = curTime
+                    prevPredict = category
+                
                 # print(categories)
                 # print(result)
             else:
