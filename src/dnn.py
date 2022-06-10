@@ -111,6 +111,12 @@ def main():
     filepath = './saved_model'
     keras.models.save_model(model, filepath)
 
+    converter = tf.lite.TFLiteConverter.from_saved_model(filepath) # path to the SavedModel directory
+    tflite_model = converter.convert()
+
+    with open('model.tflite', 'wb') as f:
+        f.write(tflite_model)
+
     # Loss curve
     plt.figure(figsize=(10, 7))
     
