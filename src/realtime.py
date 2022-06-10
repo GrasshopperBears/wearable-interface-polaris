@@ -9,6 +9,7 @@ from featureExtraction import extractFeatureWithRawData
 from scipy.io import wavfile  # scipy library to write wav files
 import soundfile as sf
 import matplotlib.pyplot as plt
+from time import time
  
 RATE = 48000
 CHUNK = int(RATE * CHOP_TIME_IN_SEC)
@@ -60,7 +61,7 @@ def realtime():
             # plt.show()
             
             print("------------------------")
-            print("")
+            print(time())
             if max(result) > 0:
                 print(categories[np.argmax(np.array(result))])
                 # print(categories)
