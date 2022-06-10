@@ -3,7 +3,7 @@ import numpy as np
 import random
 from collections import deque
 
-from featureExtraction import extractFeature
+from featureExtraction import extractFeatureFlatten
 from svm import svm_classify, make_svm_model
 from create_results_webpage import create_results_webpage
 from choppa import chopAllSamples
@@ -75,10 +75,10 @@ def loop():
     trainFeatures = deque()
 
     for audioName in testSet:
-        testFeatures.append(extractFeature(audioPath + audioName + extName))
+        testFeatures.append(extractFeatureFlatten(audioPath + audioName + extName))
 
     for audioName in trainSet:
-        trainFeatures.append(extractFeature(audioPath + audioName + extName))
+        trainFeatures.append(extractFeatureFlatten(audioPath + audioName + extName))
 
     npTestFeatures = np.array(testFeatures)
     npTestLabel = np.array(testLabel)
@@ -109,7 +109,7 @@ def buildModel():
     
     for audioName in os.listdir(audioPath):
         if audioName.endswith("wav"):
-            trainFeatures.append(extractFeature(audioPath + audioName))
+            trainFeatures.append(extractFeatureFlatten(audioPath + audioName))
             trainLabels.append(audioName.split("-")[0])
 
     npTrainFeatures = np.array(trainFeatures)

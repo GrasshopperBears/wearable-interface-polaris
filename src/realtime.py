@@ -9,6 +9,9 @@ from featureExtraction import extractFeatureWithRawData
 from scipy.io import wavfile  # scipy library to write wav files
 import soundfile as sf
 import matplotlib.pyplot as plt
+import keras
+
+from choppa import chopAllSamples
  
 RATE = 48000
 CHUNK = int(RATE * CHOP_TIME_IN_SEC)
@@ -17,8 +20,12 @@ THRESHOLD = int(THRESHOLD_RATE * 32768)
 padding_length = int(PADDING_START * RATE)
 nbits = 16
 
+# constants
+categories = []
+metaFileName = "data/metadata.csv"
+
 def realtime():
-    scaler, pca, models, categories = loadModels()
+    scaler, model = loadModels()
     
     p = pyaudio.PyAudio()
     stream = p.open(format=pyaudio.paInt16,
@@ -44,29 +51,13 @@ def realtime():
                 concatData = np.concatenate((prevData[startIdx : ], data[ : startIdx]), axis=None)
                 
             AudioData = concatData / (2 ** (nbits - 1))
-            features = extractFeatureWithRawData(AudioData, RATE).reshape(1, -1)
-            features = scaler.transform(features)
-            features = pca.transform(features)
+            features = extractFeatureWithRawData(AudioData, RATE)
+            s = features.shape
+            print(s)
+            features = scaler.transform(features.reshape(1, -1)).reshape(1, s[0], s[1])
 
-            result = [model.decision_function(features)[0] for model in models]
-            # result = knn.predict(features)
-            # print(features)
-            # print(result)
-
-            # wavfile.write(f"test/{AudioData[0]}{AudioData[1]}{AudioData[2]}{AudioData[3]}.wav", RATE, concatData)
-            # plt.figure(1)
-            # plt.title("Signal Wave???")
-            # plt.plot(AudioData)
-            # plt.show()
-            
-            if max(result) > 0:
-                print(categories[np.argmax(np.array(result))])
-                print(categories)
-                print(result)
-            else:
-                print("Not sure")
-                print(categories)
-                print(result)
+            result = model.predict(features)
+            print(categories[np.argmax(result)])
             
         prevData = data
         data = nextData
@@ -76,20 +67,25 @@ def realtime():
     p.terminate()
 
 def loadModels(modelPath = "model/"):
-    modelList = []
-    categories = []
-    for modelName in os.listdir(modelPath):
-        if modelName.startswith("scaler"):
-            scaler = joblib.load(f"{modelPath}/{modelName}")
-        elif modelName.startswith("pca"):
-            pca = joblib.load(f"{modelPath}/{modelName}")
-        # elif modelName.startswith("knn"):
-        #     knn = joblib.load(f"{modelPath}/{modelName}")
-        elif not modelName.startswith("."):
-            modelList.append(joblib.load(f"{modelPath}/{modelName}"))
-            categories.append(modelName.split(".")[0])
+    scaler = joblib.load(f"model/scaler.pkl")
+    model = keras.models.load_model("./saved_model")
 
-    return scaler, pca, modelList, categories
+    return scaler, model
+
+def initialize():
+    global categories
+
+    try:
+        metadata = open(metaFileName, "r")
+    except:
+        print("Auto-chopping original audios...")
+        chopAllSamples("originalAudios")
+        print("Auto-chopping done.")
+        metadata = open(metaFileName, "r")
+
+    categories = metadata.readline().strip("\n").split(",")
+    metadata.close()
 
 if __name__ == "__main__":
+    initialize()
     realtime()
