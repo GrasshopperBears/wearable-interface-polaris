@@ -9,6 +9,7 @@ from featureExtraction import extractFeatureWithRawData
 from scipy.io import wavfile  # scipy library to write wav files
 import soundfile as sf
 import matplotlib.pyplot as plt
+import time
  
 RATE = 48000
 CHUNK = int(RATE * CHOP_TIME_IN_SEC)
@@ -31,17 +32,31 @@ def realtime():
     prevData = np.frombuffer(stream.read(CHUNK), dtype=np.int16)
     data = np.frombuffer(stream.read(CHUNK), dtype=np.int16)
 
+    dynamite = 0
+
     while True:
+        print(time.time())
         nextData = np.frombuffer(stream.read(CHUNK), dtype=np.int16)
         
         overThrList = np.argwhere(np.abs(data) > THRESHOLD)
         if len(overThrList) != 0: # the case when some value is exceed threshold
             first = overThrList[0][0]
+            print(dynamite)
+
+            if dynamite > 0:
+                dynamite -= 1
+                continue
+
             startIdx = first - padding_length
             if startIdx > 0:
                 concatData = np.concatenate((data[startIdx : ], nextData[ : startIdx]), axis=None)
             else:
                 concatData = np.concatenate((prevData[startIdx : ], data[ : startIdx]), axis=None)
+            
+            lastIdx = startIdx + np.argwhere(np.abs(concatData) > THRESHOLD)[-1][0]
+            if lastIdx > CHUNK:
+                print((lastIdx - CHUNK) // (CHUNK // 5))
+                dynamite = 3 + ((lastIdx - CHUNK) // (CHUNK // 5))
                 
             AudioData = concatData / (2 ** (nbits - 1))
             features = extractFeatureWithRawData(AudioData, RATE).reshape(1, -1)
@@ -67,10 +82,13 @@ def realtime():
                 print("Not sure")
                 print(categories)
                 print(result)
+        else:
+            startIdx = -1
             
+        if dynamite > 0: dynamite -= 1
         prevData = data
         data = nextData
-        
+    
     stream.stop_stream()
     stream.close()
     p.terminate()
