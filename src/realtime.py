@@ -59,14 +59,18 @@ def realtime():
             # plt.plot(AudioData)
             # plt.show()
             
+            print("------------------------")
+            print("")
             if max(result) > 0:
                 print(categories[np.argmax(np.array(result))])
-                print(categories)
-                print(result)
+                # print(categories)
+                # print(result)
             else:
                 print("Not sure")
-                print(categories)
-                print(result)
+                # print(categories)
+                # print(result)
+            print("")
+            print("------------------------")
             
         prevData = data
         data = nextData
