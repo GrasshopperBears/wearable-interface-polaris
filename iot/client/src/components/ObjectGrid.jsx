@@ -3,8 +3,8 @@ import styled from 'styled-components';
 
 const ObjectGrid = ({ children, object, lastObject }) => {
   return (
-    <Wrapper selected={object === lastObject}>
-      <Title>{object}</Title>
+    <Wrapper selected={object && object === lastObject}>
+      {object && <Title>{object}</Title>}
       {children}
     </Wrapper>
   );
