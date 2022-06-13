@@ -45,11 +45,11 @@ const App = () => {
         <ObjectGrid object='glassdoor' lastObject={lastObject.object}>
           <Glassdoor lastObject={lastObject} />
         </ObjectGrid>
-        {/* <ObjectGrid object='wall' lastObject={lastObject.object}>
-          <Wall lastObject={lastObject} />
-        </ObjectGrid> */}
       </Row>
       <Row>
+        <ObjectGrid object='wall' lastObject={lastObject.object}>
+          <Wall lastObject={lastObject} />
+        </ObjectGrid>
         <ObjectGrid object='waterfilter' lastObject={lastObject.object}>
           <Waterfilter lastObject={lastObject} />
         </ObjectGrid>
