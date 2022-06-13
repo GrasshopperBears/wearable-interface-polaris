@@ -10,6 +10,7 @@ from scipy.io import wavfile  # scipy library to write wav files
 import soundfile as sf
 import matplotlib.pyplot as plt
 from time import time
+import requests
  
 RATE = 48000
 CHUNK = int(RATE * CHOP_TIME_IN_SEC)
@@ -20,7 +21,13 @@ nbits = 16
 
 doubleTapThreshold = 0.5
 
+BASE_URL = ''
+
 def realtime():
+    if len(BASE_URL) == 0:
+        print("Enter base URL")
+        exit(0)
+    
     prevTime = 0
     prevPredict = ""
     scaler, pca, models, categories = loadModels()
@@ -33,13 +40,13 @@ def realtime():
                     frames_per_buffer=CHUNK)
 
     AudioData = np.zeros(CHUNK, dtype=np.float32)
-    prevData = np.frombuffer(stream.read(CHUNK), dtype=np.int16)
-    data = np.frombuffer(stream.read(CHUNK), dtype=np.int16)
+    prevData = np.frombuffer(stream.read(CHUNK, exception_on_overflow=False), dtype=np.int16)
+    data = np.frombuffer(stream.read(CHUNK, exception_on_overflow=False), dtype=np.int16)
 
     dynamite = 0
 
     while True:
-        nextData = np.frombuffer(stream.read(CHUNK), dtype=np.int16)
+        nextData = np.frombuffer(stream.read(CHUNK, exception_on_overflow=False), dtype=np.int16)
         
         overThrList = np.argwhere(np.abs(data) > THRESHOLD)
         if len(overThrList) != 0: # the case when some value is exceed threshold
@@ -89,6 +96,8 @@ def realtime():
                     print(category)
                     prevTime = curTime
                     prevPredict = category
+                
+                requests.post('{}/detect/{}'.format(BASE_URL, category))
                 
                 # print(categories)
                 # print(result)
