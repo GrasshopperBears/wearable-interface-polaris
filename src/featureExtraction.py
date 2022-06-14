@@ -47,7 +47,7 @@ def extractFeature(audioName):
     return extractFeatureWithRawData(Audiodata, fs)
 
 def extractFeatureWithRawData(Audiodata, fs):
-    D = np.abs(librosa.stft(Audiodata, n_fft=2048, win_length=2048, hop_length=512))
+    D = np.abs(librosa.stft(Audiodata, n_fft=fs//100, win_length=fs//100, hop_length=fs//250))
     mfcc = librosa.feature.mfcc(S=librosa.power_to_db(D), sr=fs, n_mfcc=20)
 
     return mfcc.reshape(-1)
