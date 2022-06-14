@@ -21,7 +21,7 @@ nbits = 16
 
 doubleTapThreshold = 0.5
 
-BASE_URL = ''
+BASE_URL = 'https://26ca-192-249-27-82.jp.ngrok.io'
 
 def realtime():
     if len(BASE_URL) == 0:
