@@ -3,8 +3,8 @@ import styled from 'styled-components';
 
 const ObjectGrid = ({ children, object, lastObject }) => {
   return (
-    <Wrapper selected={object === lastObject}>
-      <Title>{object}</Title>
+    <Wrapper selected={object && object === lastObject}>
+      {object && <Title>{object}</Title>}
       {children}
     </Wrapper>
   );
@@ -21,14 +21,14 @@ const Wrapper = styled.div`
 const Title = styled.div`
   background-color: black;
   color: white;
-  font-size: 3rem;
+  font-size: 2rem;
   border-radius: 7px;
   text-align: center;
-  width: 24rem;
+  width: 18rem;
   padding: 10px 0;
   position: absolute;
   top: 1rem;
-  left: calc(50% - 12rem);
+  left: calc(50% - 9rem);
 `;
 
 export default ObjectGrid;
